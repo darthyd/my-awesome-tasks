@@ -3,11 +3,12 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity, Keyboard, StatusBa
 
 import { deleteById, updateById } from '../../utils/utilsID';
 import Context from '../../context/index';
+import useUpdateTasks from '../../hooks/useUpdateTasks';
 
 export default function Details({ route: { params: { description, status, id } }, navigation }) {
     const [ newDescription, setNewDescription ] = useState(description);
-
-    const { theme, tasks, setTasks } = useContext(Context);
+    const { editTask, removeTask } = useUpdateTasks();
+    const { theme, tasks, setTasks, user } = useContext(Context);
     const styles = stylesheet(theme);
 
     const handleSave = () => {
@@ -15,15 +16,14 @@ export default function Details({ route: { params: { description, status, id } }
         if(description !== newDescription) {
             const updatedList = updateById(id, [...tasks], { description: newDescription });
             setTasks(updatedList);
+            editTask(user.uid, id, { description: newDescription });
         }
         navigation.navigate('Home');
     }
 
     const handleDelete = () => {
         Keyboard.dismiss();
-        const updatedList = deleteById(id, [...tasks]);
-        
-        setTasks(updatedList)
+        removeTask(user.uid, id);
         navigation.navigate('Home');
     }
 
@@ -53,6 +53,7 @@ export default function Details({ route: { params: { description, status, id } }
                 <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
                     <Text style={styles.deleteButtonText}>Excluir Tarefa</Text>
                 </TouchableOpacity>
+                <Text style={styles.secondaryText}>{id}</Text>
             </View>
             <StatusBar backgroundColor={theme.background} barStyle='light-content' />
         </>

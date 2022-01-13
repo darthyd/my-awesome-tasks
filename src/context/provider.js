@@ -9,26 +9,15 @@ function Provider({ children }) {
   const [ auth, setAuth ] = useState(null);
   const [ user, setUser ] = useState(null);
   const [ tasks, setTasks ] = useState([]);
+  
 
   useEffect(() => {
-    AsyncStorage.getItem('@theme').then(t => {
-      t ? setTheme(themes[t]) : (setTheme(themes.default) && 
+    AsyncStorage.getItem('@theme').then((t) => {
+        t ? setTheme(themes[t]) : (setTheme(themes.default) && 
         AsyncStorage.setItem('@theme', 'default')
       );
     });
-  }, [theme]);
-
-  useEffect(() => {
-    if(auth === true){
-      AsyncStorage.getItem('@user')
-      .then(u => JSON.parse(u))
-      .then(response => {
-          setUser(response.email);
-      });
-    } else if (auth === false) {
-      setUser(null);
-    }
-  }, [auth]);
+  }, []);
 
   const value = {
     theme,

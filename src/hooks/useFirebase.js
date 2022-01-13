@@ -2,20 +2,17 @@ import firebase from '../config/firebase';
 
 export default function useFirebase() {
   const db = firebase.firestore();
+  const auth = firebase.auth();
 
   const deleteTask = (collection, id) => {
     db.collection(collection).doc(id).delete();
   }
   
-  const addTask = (collection, data) => {
-    return db.collection(collection).add(data);
+  const addTask = async (collection, data) => {
+    return await db.collection(collection).add(data).then((e) => e.id);
   }
 
-  const updateTask = (collection, id, data) => {
-    return db.collection(collection).doc(id).update(data);
-  }
-
-  const setTask = (collection, id, data) => {
+  const updateTask = async (collection, id, data) => {
     return db.collection(collection).doc(id).update(data);
   }
 
@@ -27,13 +24,22 @@ export default function useFirebase() {
     return db.collection(collection).get();
   }
 
-  const registerUser = (email, password) => {
-    return firebase.auth().createUserWithEmailAndPassword(email, password);
+  const registerUser = async (email, password) => {
+    return auth.createUserWithEmailAndPassword(email, password)
+    .then(userCredentials => userCredentials)
+    .catch(error => error);
   }
 
   const authenticateUser = (email, password) => {
-    return firebase.auth().signInWithEmailAndPassword(email, password);
+    return auth.signInWithEmailAndPassword(email, password)
+    .then(userCredentials => userCredentials)
+    .catch(error => error);
   }
 
-  return { db, deleteTask, addTask, updateTask, setTask, findTask, findAllTasks, authenticateUser, registerUser };
+  // find a task by an value
+  const findTaskByValue = (collection, key) => {
+    return db.collection(collection).where(key, '==', id).get();
+  }
+
+  return { db, deleteTask, addTask, updateTask, findTaskByValue, findTask, findAllTasks, authenticateUser, registerUser };
 }

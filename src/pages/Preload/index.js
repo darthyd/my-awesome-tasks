@@ -5,21 +5,21 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import icon from '../../../assets/icon.png';
 import { sleep } from  '../../utils/misc';
 
+import useRoutine from '../../hooks/useRoutine';
 import Context from '../../context/index';
 
 export default function Preload({ navigation }) {
-    const { theme, auth, setAuth } = useContext(Context);
+    const { theme, auth, setAuth, user } = useContext(Context);
     const styles = stylesheet(theme);
+    const { loginRoutine } = useRoutine()
 
     useEffect(() => {
         AsyncStorage.getItem('@user').then(user => {
-            user === null ? setAuth(false) : setAuth(true);
+            user === null ? setAuth(false) : loginRoutine(JSON.parse(user))
         })
 
-        if(auth === null) return
-        sleep(2000).then(() => {
-            auth ? navigation.navigate('Home') : navigation.navigate('Login')
-        })
+        if(auth === null) return    
+        !user && navigation.navigate('Login')
     }, [auth]);
 
   return (

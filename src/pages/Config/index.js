@@ -1,13 +1,13 @@
 import { useContext, useEffect } from 'react';
 import { View, Text, StyleSheet, StatusBar, TouchableOpacity, BackHandler } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import useNewTheme from '../../hooks/useNewTheme';
+import useRoutine from '../../hooks/useRoutine';
 import Context from '../../context';
 
 export default function Config({ navigation }) {
-    const { theme, setTasks, user, setUser } = useContext(Context);
-    const setNewTheme = useNewTheme();
+    const { theme, user } = useContext(Context);
+    const { logoutRoutine } = useRoutine();
+    const { email } = { ...user };
 
     const styles = stylesheet(theme);
 
@@ -21,7 +21,7 @@ export default function Config({ navigation }) {
     return (
         <View style={styles.container}>
             <Text style={styles.mainText}>Configurações</Text>            
-            <Text style={styles.secondaryText}>Você está logado como: {user}</Text>
+            <Text style={styles.secondaryText}>Você está logado como: {email}</Text>
             <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('SelectTheme')}>
                     <Text style={styles.buttonText}>Trocar o tema</Text>
             </TouchableOpacity>
@@ -33,13 +33,7 @@ export default function Config({ navigation }) {
             </TouchableOpacity>
             <TouchableOpacity 
             style={styles.buttonLogout} 
-            onPress={() => {
-                AsyncStorage.multiRemove(['@tasks', '@user', '@theme']);
-                setNewTheme('default');
-                setTasks([]);
-                setUser(null);
-                navigation.navigate('Login');
-            }}>
+            onPress={logoutRoutine}>
                 <Text style={styles.buttonTextLogout}>SAIR DA CONTA</Text>
             </TouchableOpacity>
         </View>

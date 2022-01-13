@@ -3,15 +3,18 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity, Keyboard, StatusBa
 
 import { uniqid } from '../../utils/utilsID';
 import Context from '../../context/index';
+import useUpdateTasks from '../../hooks/useUpdateTasks';
 
 export default function NewTask({ navigation }) {
     const [ description, setDescription ] = useState('');
-    const { theme, tasks, setTasks } = useContext(Context);
+    const { theme, user } = useContext(Context);
+    const { addNewTask } = useUpdateTasks();
     const styles = stylesheet(theme);
 
     const handleSave = () => {
+        const data = { description, status: false }
         Keyboard.dismiss();
-        setTasks([...tasks, { id: uniqid('task-'), description, status: false }])
+        addNewTask(user.uid, data)
         navigation.navigate('Home')
     }
 

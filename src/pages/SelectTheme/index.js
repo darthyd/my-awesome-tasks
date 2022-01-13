@@ -24,7 +24,6 @@ export default function SelectedTheme() {
     }, [theme]);
 
     const itemList = (data) => {
-        console.log(data);
         const { index } = data;
         const name = Object.keys(themes)[data.index];
         return (

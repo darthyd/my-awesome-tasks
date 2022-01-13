@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useEffect, useContext } from 'react';
 import { View, SafeAreaView, FlatList, Text, StyleSheet, TouchableOpacity, StatusBar, BackHandler, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -7,9 +7,11 @@ import Task from '../../components/Task';
 import Context from '../../context/index';
 
 export default function Home({ navigation }) {
-    const { theme, tasks, setTasks } = useContext(Context);
+    const { theme, tasks, setTasks, user } = useContext(Context);
     const styles = stylesheet(theme);
-    
+
+    console.log(user.email, user.uid);
+
     const handleBackButton = () => {               
         Alert.alert(
             'Cofirmar fechamento',
@@ -36,6 +38,7 @@ export default function Home({ navigation }) {
             });
         }
         BackHandler.addEventListener('hardwareBackPress', () => handleBackButton());
+
     }, []);
 
 

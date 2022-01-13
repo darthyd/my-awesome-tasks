@@ -1,6 +1,8 @@
 import { useState, useEffect, useContext } from 'react';
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, StatusBar, Image, BackHandler } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, StatusBar, Image, BackHandler, Alert } from 'react-native';
+
+import useFirebase from '../../hooks/useFirebase';
+import useRoutine from '../../hooks/useRoutine';
 
 import icon from '../../../assets/icon.png';
 import Context from '../../context/index';
@@ -8,15 +10,14 @@ import Context from '../../context/index';
 export default function Login({ navigation }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
-    const { theme, setAuth, setUser } = useContext(Context);
+    const { authenticateUser } = useFirebase();
+    const { firstLoginRoutine } = useRoutine();
+    const { theme } = useContext(Context);
     const styles = stylesheet(theme);
 
     const handleLogin = async () => {
-        await AsyncStorage.setItem('@user', JSON.stringify({ email }));
-        setAuth(true);
-        setUser(email);
-        navigation.navigate('Home')
+        const response = await authenticateUser(email, password);
+        response.user ? firstLoginRoutine(response.user) : Alert.alert('Error', response.message);
     };
 
     useEffect(() => {
@@ -31,7 +32,7 @@ export default function Login({ navigation }) {
                 source={icon}
             />
             <Text style={styles.mainText}>My Awesome Tasks</Text>
-            <Text style={styles.secondaryText}>
+            <Text style={styles.subtitleText}>
                 Faça login ou cadastre-se para continuar
             </Text>
             <TextInput 
@@ -52,6 +53,12 @@ export default function Login({ navigation }) {
             <TouchableOpacity style={styles.button} onPress={ handleLogin }>
                 <Text style={styles.buttonText}>Entrar</Text>
             </TouchableOpacity>
+            <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 20 }}>
+                <Text style={styles.secondaryText}>Não tem uma conta?</Text>
+                <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+                    <Text style={styles.link}> Registre-se agora</Text>
+                </TouchableOpacity>
+            </View>
         </View>
         <StatusBar backgroundColor={theme.background} barStyle='light-content' />
       </>
@@ -75,9 +82,13 @@ const stylesheet = (theme) => StyleSheet.create({
         fontWeight: 'bold',
         color: theme.primary,
     },
-    secondaryText: {
+    subtitleText: {
         color: theme.text,
         fontStyle: 'italic',
+    },
+    secondaryText: {
+        color: theme.text,
+        fontSize: 18,
     },
     input: {
         width: '80%',
@@ -102,5 +113,11 @@ const stylesheet = (theme) => StyleSheet.create({
         color: theme.text,
         fontWeight: 'bold',
         fontSize: 20,
+    },
+    link: {
+        color: theme.primary,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        fontSize: 18,
     },
 });

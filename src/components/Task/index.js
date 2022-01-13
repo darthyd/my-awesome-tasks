@@ -5,19 +5,21 @@ import { FontAwesome } from '@expo/vector-icons';
 import { deleteById, updateById } from '../../utils/utilsID';
 
 import Context from '../../context/index';
+import useUpdateTasks from '../../hooks/useUpdateTasks';
 
 export default function AddTask({navigation, data: { description, status, id }}) {
-    const { theme, tasks, setTasks } = useContext(Context);
+    const { theme, tasks, setTasks, user } = useContext(Context);
     const styles = stylesheet(theme);
+    const { removeTask, editTask } = useUpdateTasks();
     
     const handleDelete = () => {
-        const updatedList = deleteById(id, [...tasks]);
-        setTasks(updatedList)
+        removeTask(user.uid, id);
     }
 
     const handleStatus = () => {
         const updated = updateById(id, [...tasks], { status: !status });
         setTasks(updated);
+        editTask(user.uid, id, { status: !status });
     }
 
     return (
@@ -39,12 +41,11 @@ export default function AddTask({navigation, data: { description, status, id }})
                     { description }
                 </Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.deleteTask}>
+            <TouchableOpacity style={styles.deleteTask} onPress={handleDelete}>
               <FontAwesome 
               name="trash" 
               size={38} 
               color={theme.danger}
-              onPress={handleDelete}
               />
             </TouchableOpacity>
         </View>
@@ -80,6 +81,10 @@ const stylesheet = (theme) => StyleSheet.create({
         paddingVertical: 10,
         alignItems: 'center',
         color: theme.text,
+    },
+    deleteTask: {
+        paddingHorizontal: 10,
+        paddingVertical: 5,
     },
 })
 
