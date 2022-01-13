@@ -12,7 +12,7 @@ export default function NewTask({ navigation }) {
     const styles = stylesheet(theme);
 
     const handleSave = () => {
-        const data = { description, status: false }
+        const data = { description, status: false, createdAt: Date.now(), updatedAt: null }
         Keyboard.dismiss();
         addNewTask(user.uid, data)
         navigation.navigate('Home')

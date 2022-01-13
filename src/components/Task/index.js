@@ -17,9 +17,10 @@ export default function AddTask({navigation, data: { description, status, id }})
     }
 
     const handleStatus = () => {
-        const updated = updateById(id, [...tasks], { status: !status });
+        const updatedAt = Date.now();
+        const updated = updateById(id, [...tasks], { status: !status, updatedAt });
         setTasks(updated);
-        editTask(user.uid, id, { status: !status });
+        editTask(user.uid, id, { status: !status, updatedAt });
     }
 
     return (

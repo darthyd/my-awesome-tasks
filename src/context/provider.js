@@ -17,7 +17,7 @@ function Provider({ children }) {
         AsyncStorage.setItem('@theme', 'default')
       );
     });
-  }, []);
+  }, [theme]);
 
   const value = {
     theme,

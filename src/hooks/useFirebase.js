@@ -12,6 +12,10 @@ export default function useFirebase() {
     return await db.collection(collection).add(data).then((e) => e.id);
   }
 
+  const setNewDocument = async (collection, doc, data) => {
+    return await db.collection(collection).doc(doc).set(data);
+  }
+
   const updateTask = async (collection, id, data) => {
     return db.collection(collection).doc(id).update(data);
   }
@@ -20,8 +24,9 @@ export default function useFirebase() {
     return db.collection(collection).doc(id).get();
   }
 
-  const findAllTasks = (collection) => {
-    return db.collection(collection).get();
+  const findAllTasks = async (collection) => {
+    const snapshot = await db.collection(collection).get();
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   }
 
   const registerUser = async (email, password) => {
@@ -36,10 +41,5 @@ export default function useFirebase() {
     .catch(error => error);
   }
 
-  // find a task by an value
-  const findTaskByValue = (collection, key) => {
-    return db.collection(collection).where(key, '==', id).get();
-  }
-
-  return { db, deleteTask, addTask, updateTask, findTaskByValue, findTask, findAllTasks, authenticateUser, registerUser };
+  return { db, deleteTask, setNewDocument, addTask, updateTask, findTask, findAllTasks, authenticateUser, registerUser };
 }

@@ -14,9 +14,10 @@ export default function Details({ route: { params: { description, status, id } }
     const handleSave = () => {
         Keyboard.dismiss();
         if(description !== newDescription) {
-            const updatedList = updateById(id, [...tasks], { description: newDescription });
+            const updateAt = Date.now()
+            const updatedList = updateById(id, [...tasks], { description: newDescription, updateAt });
             setTasks(updatedList);
-            editTask(user.uid, id, { description: newDescription });
+            editTask(user.uid, id, { description: newDescription, updateAt });
         }
         navigation.navigate('Home');
     }

@@ -7,10 +7,8 @@ import Task from '../../components/Task';
 import Context from '../../context/index';
 
 export default function Home({ navigation }) {
-    const { theme, tasks, setTasks, user } = useContext(Context);
+    const { theme, tasks } = useContext(Context);
     const styles = stylesheet(theme);
-
-    console.log(user.email, user.uid);
 
     const handleBackButton = () => {               
         Alert.alert(
@@ -30,21 +28,8 @@ export default function Home({ navigation }) {
        }
 
     useEffect(() => {
-        if(tasks.length === 0) {
-            AsyncStorage.getItem('@tasks').then(store => {
-                if(store) {
-                    setTasks(JSON.parse(store));
-                }
-            });
-        }
         BackHandler.addEventListener('hardwareBackPress', () => handleBackButton());
-
     }, []);
-
-
-    useEffect(() => {
-        AsyncStorage.setItem('@tasks', JSON.stringify(tasks));
-    } , [tasks]);
 
     return (
         <>
