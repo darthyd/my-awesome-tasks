@@ -4,8 +4,6 @@ import {
 } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 
-import { updateById } from '../../../../utils/utilsID';
-
 import stylesheet from './style';
 
 import Context from '../../../../context';
@@ -13,21 +11,19 @@ import useUpdateTasks from '../../../../hooks/useUpdateTasks';
 
 export default function AddTask({ navigation, data: { description, status, id } }) {
   const {
-    theme, tasks, setTasks, user
+    theme, tasks, setTasks
   } = useContext(Context);
 
-  const { removeTask, editTask } = useUpdateTasks();
+  const { deleteTask, editTask } = useUpdateTasks();
   const styles = stylesheet(theme);
 
   const handleDelete = () => {
-    removeTask(user.uid, id);
+    deleteTask(id);
   };
 
   const handleStatus = () => {
     const updatedAt = Date.now();
-    const updated = updateById(id, [...tasks], { status: !status, updatedAt });
-    setTasks(updated);
-    editTask(user.uid, id, { status: !status, updatedAt });
+    editTask(id, { status: !status, updatedAt });
   };
 
   return (

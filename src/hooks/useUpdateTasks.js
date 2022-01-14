@@ -1,35 +1,31 @@
 import { useContext } from 'react';
-import useFirebase from './useFirebase';
-import Context from '../context/index';
+import Context from '../context';
+import { uniqId } from '../utils/utilsID';
 
-export default function updateTasks() {
-  const {
-    addTask, updateTask, deleteTask, setNewDocument
-  } = useFirebase();
-  const { setTasks, tasks } = useContext(Context);
+import useStore from './useStore';
 
-  const addNewTask = async (uid, data) => {
-    const id = await addTask(uid, data);
-    if (id) {
-      setTasks([...tasks, { id, ...data }]);
-      setNewDocument(uid, uid, { lastUpdateAt: data.createdAt });
-    }
-    setTasks([...tasks, { ...data, id }]);
+export default function useUpdateTasks() {
+  const { tasks, setTasks } = useContext(Context);
+  const { sendStateToStores } = useStore();
+
+  const addTask = (data) => {
+    const newTask = { ...data, id: uniqId('task_') };
+    setTasks([...tasks, newTask], sendStateToStores([...tasks, newTask]));
   };
 
-  const editTask = async (uid, id, data) => {
-    try {
-      updateTask(uid, id, data);
-      setNewDocument(uid, uid, { lastUpdateAt: data.updatedAt });
-    } catch (error) {
-      alert.Alert('Error', error.message);
-    }
+  const editTask = (id, data) => {
+    const arrayCopy = [...tasks];
+    const index = arrayCopy.findIndex((item) => item.id === id);
+    arrayCopy[index] = { ...arrayCopy[index], ...data };
+    setTasks(arrayCopy, sendStateToStores(arrayCopy));
   };
 
-  const removeTask = (uid, id) => {
-    deleteTask(uid, id);
-    setTasks(tasks.filter((task) => task.id !== id));
+  const deleteTask = (id) => {
+    const arrayCopy = [...tasks];
+    const index = arrayCopy.findIndex((item) => item.id === id);
+    arrayCopy.splice(index, 1);
+    setTasks(arrayCopy, sendStateToStores(arrayCopy));
   };
 
-  return { addNewTask, editTask, removeTask };
+  return { addTask, editTask, deleteTask };
 }

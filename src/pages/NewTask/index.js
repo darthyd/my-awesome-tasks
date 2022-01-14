@@ -9,16 +9,16 @@ import stylesheet from './style';
 
 export default function NewTask({ navigation }) {
   const [description, setDescription] = useState('');
-  const { theme, user } = useContext(Context);
-  const { addNewTask } = useUpdateTasks();
+  const { theme } = useContext(Context);
+  const { addTask } = useUpdateTasks();
   const styles = stylesheet(theme);
 
   const handleSave = () => {
+    Keyboard.dismiss();
     const data = {
       description, status: false, createdAt: Date.now(), updatedAt: null
     };
-    Keyboard.dismiss();
-    addNewTask(user.uid, data);
+    addTask(data);
     navigation.navigate('Home');
   };
 

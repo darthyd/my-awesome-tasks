@@ -1,33 +1,8 @@
 import firebase from '../config/firebase';
 
 export default function useFirebase() {
-  const db = firebase.firestore();
   const auth = firebase.auth();
-
-  const deleteTask = (collection, id) => {
-    db.collection(collection).doc(id).delete();
-  };
-
-  const addTask = async (collection, data) => {
-    return db.collection(collection).add(data).then((e) => e.id);
-  };
-
-  const setNewDocument = async (collection, doc, data) => {
-    return db.collection(collection).doc(doc).set(data);
-  };
-
-  const updateTask = async (collection, id, data) => {
-    return db.collection(collection).doc(id).update(data);
-  };
-
-  const findTask = (collection, id) => {
-    return db.collection(collection).doc(id).get();
-  };
-
-  const findAllTasks = async (collection) => {
-    const snapshot = await db.collection(collection).get();
-    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-  };
+  const db = firebase.firestore();
 
   const registerUser = async (email, password) => {
     return auth.createUserWithEmailAndPassword(email, password)
@@ -41,15 +16,24 @@ export default function useFirebase() {
       .catch((error) => error);
   };
 
+  const getAllTasks = async (collection) => {
+    return db.collection(collection).get()
+      .then((tasks) => tasks.docs)
+      .then((tasks) => tasks.filter((task) => task.id.includes('task')))
+      .then((docs) => docs.map((doc) => ({ id: doc.id, ...doc.data() })))
+      .catch((error) => error);
+  };
+
+  const newDocToDB = async (collection, id, task) => {
+    return db.collection(collection).doc(id).set(task)
+      .then((doc) => doc)
+      .catch((error) => error);
+  };
+
   return {
-    db,
-    deleteTask,
-    setNewDocument,
-    addTask,
-    updateTask,
-    findTask,
-    findAllTasks,
     authenticateUser,
-    registerUser
+    registerUser,
+    getAllTasks,
+    newDocToDB
   };
 }

@@ -3,16 +3,15 @@ import {
   View, Text, TextInput, TouchableOpacity, Keyboard, StatusBar, BackHandler
 } from 'react-native';
 
-import { updateById } from '../../utils/utilsID';
 import Context from '../../context/index';
 import useUpdateTasks from '../../hooks/useUpdateTasks';
 import stylesheet from './style';
 
 export default function Details({ route: { params: { description, id } }, navigation }) {
   const [newDescription, setNewDescription] = useState(description);
-  const { editTask, removeTask } = useUpdateTasks();
+  const { editTask, deleteTask } = useUpdateTasks();
   const {
-    theme, tasks, setTasks, user
+    theme, user
   } = useContext(Context);
   const styles = stylesheet(theme);
 
@@ -20,16 +19,14 @@ export default function Details({ route: { params: { description, id } }, naviga
     Keyboard.dismiss();
     if (description !== newDescription) {
       const updateAt = Date.now();
-      const updatedList = updateById(id, [...tasks], { description: newDescription, updateAt });
-      setTasks(updatedList);
-      editTask(user.uid, id, { description: newDescription, updateAt });
+      editTask(id, { description: newDescription, updateAt });
     }
     navigation.navigate('Home');
   };
 
   const handleDelete = () => {
     Keyboard.dismiss();
-    removeTask(user.uid, id);
+    deleteTask(user.uid, id);
     navigation.navigate('Home');
   };
 
