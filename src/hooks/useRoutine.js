@@ -34,13 +34,14 @@ export default function useRoutine() {
       .then(() => navigation.navigate('Login'));
   };
 
-  const firstLoginRoutine = async (user) => {
+  const firstLoginRoutine = async (user, setPass, setEmail) => {
     const getTasks = await getTasksFromDB(user.uid);
     AsyncStorage.setItem('@user', JSON.stringify(user))
       .then(() => setTasks(getTasks, sendStateToStores(getTasks, false)))
       .then(() => setUser(user))
       .then(() => setAuth(true))
-      .then(() => navigation.navigate('Home'));
+      .then(() => navigation.navigate('Home'))
+      .then(() => setEmail('', setPass('')));
   };
 
   return { loginRoutine, firstLoginRoutine, logoutRoutine };

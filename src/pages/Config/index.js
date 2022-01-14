@@ -11,8 +11,6 @@ import stylesheet from './style';
 
 export default function Config({ navigation }) {
   const { user, theme, tasks } = useContext(Context);
-  const dataUser = { ...user };
-  const { email, uid } = dataUser;
   const { logoutRoutine } = useRoutine();
   const { syncLocalWithRemote } = useStore();
   const styles = stylesheet(theme);
@@ -25,12 +23,13 @@ export default function Config({ navigation }) {
   }, []);
 
   return (
+    user && (
     <View style={styles.container}>
       <Text style={styles.mainText}>Configurações</Text>
       <Text style={styles.secondaryText}>
         Você está logado como:
         {' '}
-        {email}
+        {user.email}
       </Text>
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('SelectTheme')}>
         <Text style={styles.buttonText}>Trocar o tema</Text>
@@ -43,10 +42,11 @@ export default function Config({ navigation }) {
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.buttonLogout}
-        onPress={() => logoutRoutine(uid)}
+        onPress={logoutRoutine}
       >
         <Text style={styles.buttonTextLogout}>SAIR DA CONTA</Text>
       </TouchableOpacity>
     </View>
+    )
   );
 }
