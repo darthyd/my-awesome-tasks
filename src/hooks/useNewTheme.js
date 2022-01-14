@@ -5,13 +5,13 @@ import Context from '../context/index';
 import themes from '../config/themes';
 
 const useNewTheme = () => {
-    const { theme: currentTheme, setTheme } = useContext(Context);
+  const { setTheme } = useContext(Context);
 
-    return (theme) => {
-        if(!themes.hasOwnProperty(theme)) return; 
-        setTheme(themes[theme])
-        AsyncStorage.setItem('@theme', theme);
-    }
-}
+  return (theme) => {
+    if (!Object.prototype.hasOwnProperty.call(themes, theme)) return;
+    setTheme(themes[theme]);
+    AsyncStorage.setItem('@theme', theme);
+  };
+};
 
 export default useNewTheme;
