@@ -45,6 +45,8 @@ export default function useStore() {
       const { id, ...taskData } = findById(task.id, localTasks);
       db.collection(userId).doc(id).update(taskData);
     });
+
+    db.collection(userId).doc(userId).set({ lastUpdateAt: Date.now() });
   };
 
   const getTasksFromDB = async (id = user.uid) => {
