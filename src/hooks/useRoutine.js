@@ -8,33 +8,36 @@ import useStore from './useStore';
 
 export default function useRoutine() {
   const navigation = useNavigation();
-  const { setUser, setAuth, setTasks } = useContext(Context);
+  const {
+    setUser, setAuth, setTasks, tasks
+  } = useContext(Context);
   const setNewTheme = useNewTheme();
-  const { sendStateToStores, syncLocalWithRemote, getTasksFromLocalStorage } = useStore();
+  const {
+    sendStateToStores, syncLocalWithRemote, getTasksFromLocalStorage, getTasksFromDB
+  } = useStore();
 
   const loginRoutine = (user) => {
     getTasksFromLocalStorage()
-      .then((tasks) => setTasks(tasks, syncLocalWithRemote(user.uid)))
+      .then((t) => setTasks(t, syncLocalWithRemote(t, user.uid)))
       .then(() => setUser(user))
       .then(() => setAuth(true))
       .then(() => navigation.navigate('Home'));
   };
 
   const logoutRoutine = () => {
-    sendStateToStores().then(() => {
-      AsyncStorage.clear().then(() => {
-        setUser(null);
-        setAuth(false);
-        setTasks([]);
-        setNewTheme(false);
-      });
-    }).then(() => navigation.navigate('Login'));
+    AsyncStorage.multiRemove(['@user', '@auth', '@tasks'])
+      .then(() => syncLocalWithRemote([...tasks]))
+      .then(() => setTasks([]))
+      .then(() => setNewTheme('default'))
+      .then(() => setAuth(null))
+      .then(() => setUser(null))
+      .then(() => navigation.navigate('Login'));
   };
 
   const firstLoginRoutine = async (user) => {
-    const getTasksFromDB = await getTasksFromDB(user.uid);
+    const getTasks = await getTasksFromDB(user.uid);
     AsyncStorage.setItem('@user', JSON.stringify(user))
-      .then(() => setTasks(getTasksFromDB, sendStateToStores(false)))
+      .then(() => setTasks(getTasks, sendStateToStores(getTasks, false)))
       .then(() => setUser(user))
       .then(() => setAuth(true))
       .then(() => navigation.navigate('Home'));

@@ -40,7 +40,7 @@ export default function Home({ navigation }) {
   return (
     <>
       <View style={styles.container}>
-        {tasks.length > 0 ? (
+        {tasks && tasks.length > 0 ? (
           <SafeAreaView style={styles.containerTasks}>
             <Text style={styles.mainText}>Tarefas</Text>
             <FlatList

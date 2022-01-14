@@ -11,11 +11,11 @@ import Context from '../../context/index';
 import stylesheet from './style';
 
 export default function Register({ navigation }) {
+  const { theme, user } = useContext(Context);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { registerUser } = useFirebase();
-  const { firstLoginRoutine } = useRoutine();
-  const { theme } = useContext(Context);
+  const { firstLoginRoutine } = useRoutine(user);
   const styles = stylesheet(theme);
 
   const handleRegister = async () => {

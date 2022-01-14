@@ -10,9 +10,7 @@ import Context from '../../../../context';
 import useUpdateTasks from '../../../../hooks/useUpdateTasks';
 
 export default function AddTask({ navigation, data: { description, status, id } }) {
-  const {
-    theme, tasks, setTasks
-  } = useContext(Context);
+  const { theme } = useContext(Context);
 
   const { deleteTask, editTask } = useUpdateTasks();
   const styles = stylesheet(theme);
@@ -39,7 +37,7 @@ export default function AddTask({ navigation, data: { description, status, id } 
       <TouchableOpacity
         style={styles.taskClickableArea}
         onPress={() => navigation.navigate('Details', {
-          description, status, id, tasks, setTasks
+          description, status, id
         })}
       >
         <Text

@@ -7,11 +7,11 @@ import firebase from '../config/firebase';
 import { findById } from '../utils/utilsID';
 
 export default function useStore() {
-  const { user, tasks } = useContext(Context);
-  const { getAllTasks, newDocToDB } = useFirebase();
+  const { user } = useContext(Context);
+  const { newDocToDB } = useFirebase();
   const db = firebase.firestore();
 
-  const sendTasksToLocalStorage = (data = tasks) => {
+  const sendTasksToLocalStorage = (data) => {
     return AsyncStorage.setItem('@tasks', JSON.stringify(data));
   };
 
@@ -21,9 +21,9 @@ export default function useStore() {
     return localTasks;
   };
 
-  const syncLocalWithRemote = async (userId = user.uid) => {
-    const remoteTasks = await getAllTasks(userId);
-    const localTasks = await getTasksFromLocalStorage();
+  const syncLocalWithRemote = async (data, userId = user.uid,) => {
+    const remoteTasks = await getTasksFromDB(userId);
+    const localTasks = data || await getTasksFromLocalStorage();
 
     const tasksToAdd = localTasks.filter((localTask) => !remoteTasks
       .find((remoteTask) => remoteTask.id === localTask.id));
@@ -47,14 +47,17 @@ export default function useStore() {
     });
   };
 
-  const getTasksFromDB = (id = user.uid) => {
-    return db.collection(id).onSnapshot((snapshot) => snapshot.docs
-      .map((doc) => ({ id: doc.id, ...doc.data() })));
+  const getTasksFromDB = async (id = user.uid) => {
+    const snapshot = await db.collection(id).get();
+    const dbTasks = snapshot.docs
+      .filter((doc) => doc.id.includes('task'))
+      .map((task) => ({ id: task.id, ...task.data() }));
+    return dbTasks;
   };
 
   const sendStateToStores = (data, syncRemote = true) => {
     sendTasksToLocalStorage(data).then(() => {
-      if (syncRemote) syncLocalWithRemote();
+      if (syncRemote) syncLocalWithRemote(data);
     });
   };
 

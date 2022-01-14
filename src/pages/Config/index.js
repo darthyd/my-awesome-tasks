@@ -4,14 +4,17 @@ import {
 } from 'react-native';
 
 import useRoutine from '../../hooks/useRoutine';
+import useStore from '../../hooks/useStore';
 import Context from '../../context';
 
 import stylesheet from './style';
 
 export default function Config({ navigation }) {
-  const { user, theme } = useContext(Context);
+  const { user, theme, tasks } = useContext(Context);
+  const dataUser = { ...user };
+  const { email, uid } = dataUser;
   const { logoutRoutine } = useRoutine();
-  const { email } = { ...user };
+  const { syncLocalWithRemote } = useStore();
   const styles = stylesheet(theme);
 
   useEffect(() => {
@@ -35,12 +38,12 @@ export default function Config({ navigation }) {
       <TouchableOpacity style={styles.button} onPress={null}>
         <Text style={styles.buttonText}>Limpar Tarefas Automaticamente</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={null}>
+      <TouchableOpacity style={styles.button} onPress={() => syncLocalWithRemote(tasks)}>
         <Text style={styles.buttonText}>Sincronizar Tarefas</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.buttonLogout}
-        onPress={logoutRoutine}
+        onPress={() => logoutRoutine(uid)}
       >
         <Text style={styles.buttonTextLogout}>SAIR DA CONTA</Text>
       </TouchableOpacity>

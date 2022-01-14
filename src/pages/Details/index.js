@@ -10,16 +10,14 @@ import stylesheet from './style';
 export default function Details({ route: { params: { description, id } }, navigation }) {
   const [newDescription, setNewDescription] = useState(description);
   const { editTask, deleteTask } = useUpdateTasks();
-  const {
-    theme, user
-  } = useContext(Context);
+  const { theme, user } = useContext(Context);
   const styles = stylesheet(theme);
 
   const handleSave = () => {
     Keyboard.dismiss();
     if (description !== newDescription) {
-      const updateAt = Date.now();
-      editTask(id, { description: newDescription, updateAt });
+      const updatedAt = Date.now();
+      editTask(id, { description: newDescription, updatedAt });
     }
     navigation.navigate('Home');
   };

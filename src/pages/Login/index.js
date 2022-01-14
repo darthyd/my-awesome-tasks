@@ -12,11 +12,11 @@ import Context from '../../context/index';
 import stylesheet from './style';
 
 export default function Login({ navigation }) {
+  const { theme } = useContext(Context);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { authenticateUser } = useFirebase();
   const { firstLoginRoutine } = useRoutine();
-  const { theme } = useContext(Context);
   const styles = stylesheet(theme);
 
   const handleLogin = async () => {
@@ -57,10 +57,10 @@ export default function Login({ navigation }) {
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Entrar</Text>
         </TouchableOpacity>
-        <View style={styles.notResgistered}>
+        <View style={styles.notRegistered}>
           <Text style={styles.secondaryText}>Não tem uma conta?</Text>
           <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-            <Text style={styles.link}> Registre-se agora</Text>
+            <Text style={styles.link}> registre-se agora</Text>
           </TouchableOpacity>
         </View>
       </View>

@@ -15,12 +15,14 @@ export default function Preload({ navigation }) {
     theme, auth, setAuth, user
   } = useContext(Context);
   const styles = stylesheet(theme);
-  const { loginRoutine } = useRoutine();
+  const { loginRoutine } = useRoutine(user);
 
   useEffect(() => {
-    AsyncStorage.getItem('@user').then((u) => {
-      return u === null ? setAuth(false) : loginRoutine(JSON.parse(u));
-    });
+    if (!auth) {
+      AsyncStorage.getItem('@user').then((u) => {
+        return u === null ? setAuth(false) : loginRoutine(JSON.parse(u));
+      });
+    }
 
     if (auth === null) return;
     if (!user) navigation.navigate('Login');
