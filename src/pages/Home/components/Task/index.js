@@ -36,7 +36,7 @@ export default function AddTask({ navigation, data: { description, status, id } 
         <FontAwesome
           name="check"
           size={38}
-          color={status ? theme.primary : theme.text}
+          color={status ? theme.success : theme.text}
           onPress={handleStatus}
         />
       </TouchableOpacity>

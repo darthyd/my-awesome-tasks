@@ -43,7 +43,7 @@ export default (theme) => StyleSheet.create({
   deleteButton: {
     width: '50%',
     height: 50,
-    marginTop: 20,
+    marginVertical: 20,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: theme.danger,
