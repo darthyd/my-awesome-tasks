@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import {
-  Text, TextInput, View, TouchableOpacity, StatusBar, Image, BackHandler, Alert
+  Text, TextInput, View, TouchableOpacity, StatusBar, Image, BackHandler, Alert, Keyboard
 } from 'react-native';
 
 import useFirebase from '../../hooks/useFirebase';
@@ -20,8 +20,10 @@ export default function Login({ navigation }) {
   const styles = stylesheet(theme);
 
   const handleLogin = async () => {
+    Keyboard.dismiss();
     const response = await authenticateUser(email, password);
-    return response.user ? firstLoginRoutine(response.user) : Alert.alert('Error', response.message);
+    return response.user ? firstLoginRoutine(response.user, setEmail, setPassword)
+      : Alert.alert('Error', response.message);
   };
 
   useEffect(() => {
