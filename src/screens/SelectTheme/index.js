@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import {
-  Text, FlatList, SafeAreaView, TouchableOpacity
+  Text, FlatList, SafeAreaView, TouchableOpacity, BackHandler
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -9,7 +9,7 @@ import Context from '../../provider';
 import themes from '../../configs/themes';
 import stylesheet from './style';
 
-import { capitalize, sleep } from '../../utils/misc';
+import { capitalize } from '../../utils/misc';
 import { db } from '../../configs/firebase';
 
 export default function SelectedTheme({ navigation }) {
@@ -23,6 +23,8 @@ export default function SelectedTheme({ navigation }) {
       setTheme({ ...themes[selectedTheme], name: selectedTheme });
       AsyncStorage.setItem('@theme', selectedTheme);
       db.collection(user.uid).doc('config').update({ theme: selectedTheme });
+    } else {
+      navigation.goBack();
     }
     setApplied(true);
   };
@@ -30,9 +32,13 @@ export default function SelectedTheme({ navigation }) {
   useEffect(() => {
     if (applied && selectedTheme === theme.name) {
       setApplied(false);
-      sleep(1000).then(() => navigation.goBack());
+      navigation.goBack();
     }
   }, [theme]);
+
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', () => navigation.goBack());
+  }, []);
 
   const itemList = (data) => {
     const { index } = data;

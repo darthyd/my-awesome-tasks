@@ -8,7 +8,6 @@ import { auth } from '../../configs/firebase';
 
 import icon from '../../../assets/icon.png';
 import Context from '../../provider';
-import useRoutine from '../../hooks/useRoutine';
 
 import Button from '../../components/Button';
 import Input from '../../components/Input';
@@ -20,13 +19,11 @@ export default function Register({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorState, setErrorState] = useState('');
-  const { firstLoginRoutine } = useRoutine();
   const styles = stylesheet(theme);
 
   const handleLogin = () => {
     Keyboard.dismiss();
     createUserWithEmailAndPassword(auth, email, password)
-      .then((response) => firstLoginRoutine(response.user))
       .catch((error) => setErrorState(error.message));
   };
 
@@ -36,10 +33,9 @@ export default function Register({ navigation }) {
   };
 
   useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', () => true);
+    BackHandler.addEventListener('hardwareBackPress', () => navigation.goBack());
     if (errorState) {
       Alert.alert(errorState);
-      console.log(errorState);
       setErrorState('');
     }
   }, [errorState]);

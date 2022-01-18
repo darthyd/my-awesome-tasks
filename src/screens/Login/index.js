@@ -33,7 +33,7 @@ export default function Login({ navigation }) {
   };
 
   useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', () => true);
+    BackHandler.addEventListener('hardwareBackPress', () => navigation.goBack());
     if (errorState) {
       Alert.alert(errorState);
       setErrorState('');

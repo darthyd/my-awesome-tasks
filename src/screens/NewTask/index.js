@@ -23,10 +23,7 @@ export default function NewTask({ navigation }) {
   };
 
   useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', () => {
-      navigation.navigate('Home');
-      return true;
-    });
+    BackHandler.addEventListener('hardwareBackPress', () => navigation.goBack());
   }, []);
 
   return (

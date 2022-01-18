@@ -17,12 +17,14 @@ export default function useRoutine() {
     // busca o tema do usuário no localstorage
     const localTheme = await AsyncStorage.getItem('@theme');
     // verifica se a requisição ao local storage retornou algum valor
-    // se não retornou busca o tema do db
     if (!localTheme) {
+      // se não retornou busca o tema do db
       const config = await db.collection(u.uid).doc('config').get();
-      const { theme: dbTheme } = config.data();
-      // e atribui o valor retornado ao response
-      response.theme = { ...themes[dbTheme], name: dbTheme };
+      // se não retornou o seta o tema padrão para o db e para o local
+      const newTheme = config.data()?.theme || 'default';
+      if (!config.data()?.theme) db.collection(u.uid).doc('config').set({ theme: 'default' });
+      AsyncStorage.setItem('@theme', newTheme);
+      response.theme = { ...themes[newTheme], name: newTheme };
     }
 
     // busca as tarefas do usuário no localstorage

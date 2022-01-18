@@ -12,10 +12,11 @@ function Provider({ children }) {
   const [tasks, setTasks] = useState(null);
 
   useEffect(() => {
-    // seta o tema do localstorage se diferente de null se não seta o tema padrão
     AsyncStorage.getItem('@theme')
-      .then((t) => (t ? JSON.parse(t) : 'default'))
-      .then((t) => setTheme({ ...themes[t], name: t }));
+      .then((t) => t || 'default')
+      .then((t) => {
+        setTheme({ ...themes[t], name: t });
+      });
   }, []);
 
   const value = useMemo(() => ({

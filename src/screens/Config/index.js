@@ -13,10 +13,7 @@ export default function Config({ navigation }) {
   const styles = stylesheet(theme);
 
   useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', () => {
-      navigation.navigate('Home');
-      return true;
-    });
+    BackHandler.addEventListener('hardwareBackPress', () => navigation.goBack());
   }, []);
 
   return (

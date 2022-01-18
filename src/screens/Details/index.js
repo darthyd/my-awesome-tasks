@@ -29,10 +29,7 @@ export default function Details({ route: { params: { description, id } }, naviga
   };
 
   useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', () => {
-      navigation.navigate('Home');
-      return true;
-    });
+    BackHandler.addEventListener('hardwareBackPress', () => navigation.goBack());
   }, []);
 
   return (
