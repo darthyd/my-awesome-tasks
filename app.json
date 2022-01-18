@@ -1,10 +1,15 @@
 {
   "expo": {
-    "name": "My Awesome Tasker",
-    "slug": "my-awesome-tasker",
+    "name": "myawesometasks",
+    "slug": "myawesometasks",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
@@ -17,9 +22,9 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#FFFFFF"
       },
-      "package": "com.darthyd.soft.myawesometasks"
+      "package": "com.darthyd.myawesometasks"
     },
     "web": {
       "favicon": "./assets/favicon.png"

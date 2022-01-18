@@ -1,48 +1,55 @@
 import { useContext } from 'react';
-import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Context from '../context/index';
-import useNewTheme from './useNewTheme';
-
+import Context from '../provider';
+import themes from '../configs/themes';
+import { db } from '../configs/firebase';
 import useStore from './useStore';
 
 export default function useRoutine() {
-  const navigation = useNavigation();
   const {
-    setUser, setAuth, setTasks, tasks
+    setTasks, setTheme, setUser, user, theme
   } = useContext(Context);
-  const setNewTheme = useNewTheme();
-  const {
-    sendStateToStores, syncLocalWithRemote, getTasksFromLocalStorage, getTasksFromDB
-  } = useStore();
+  const { getTasksFromDB, syncLocalWithRemote } = useStore();
 
-  const loginRoutine = (user) => {
-    getTasksFromLocalStorage()
-      .then((t) => setTasks(t, syncLocalWithRemote(t, user.uid)))
-      .then(() => setUser(user))
-      .then(() => setAuth(true))
-      .then(() => navigation.navigate('Home'));
+  const loginRoutine = async (u = user) => {
+    const response = { theme: { ...theme }, tasks: [] };
+
+    // busca o tema do usuário no localstorage
+    const localTheme = await AsyncStorage.getItem('@theme');
+    // verifica se a requisição ao local storage retornou algum valor
+    if (!localTheme) {
+      // se não retornou busca o tema do db
+      const config = await db.collection(u.uid).doc('config').get();
+      // se não retornou o seta o tema padrão para o db e para o local
+      const newTheme = config.data()?.theme || 'default';
+      if (!config.data()?.theme) db.collection(u.uid).doc('config').set({ theme: 'default' });
+      AsyncStorage.setItem('@theme', newTheme);
+      response.theme = { ...themes[newTheme], name: newTheme };
+    }
+
+    // busca as tarefas do usuário no localstorage
+    const localTasks = await AsyncStorage.getItem('@tasks');
+    // verifica se a requisição ao local storage retornou algum valor
+    // se não retornou busca as tarefas do db
+    if (!localTasks) { // atribui o valor retornado ao response e ao localstorage
+      const dbTasks = await getTasksFromDB(u.uid);
+      AsyncStorage.setItem('@tasks', JSON.stringify(dbTasks));
+      response.tasks = dbTasks;
+    } else { // se retornou, atribui o valor retornado ao response e atualiza o db
+      response.tasks = JSON.parse(localTasks);
+      syncLocalWithRemote(JSON.parse(localTasks));
+    }
+
+    // retorna o response com os dados de inicialização
+    return response;
   };
 
   const logoutRoutine = () => {
-    AsyncStorage.multiRemove(['@user', '@auth', '@tasks'])
-      .then(() => syncLocalWithRemote([...tasks]))
-      .then(() => setTasks([]))
-      .then(() => setNewTheme('default'))
-      .then(() => setAuth(null))
-      .then(() => setUser(null))
-      .then(() => navigation.navigate('Login'));
+    AsyncStorage.clear();
+    setTheme(themes.default);
+    setUser(null);
+    setTasks([]);
   };
 
-  const firstLoginRoutine = async (user, setPass, setEmail) => {
-    const getTasks = await getTasksFromDB(user.uid);
-    AsyncStorage.setItem('@user', JSON.stringify(user))
-      .then(() => setTasks(getTasks, sendStateToStores(getTasks, false)))
-      .then(() => setUser(user))
-      .then(() => setAuth(true))
-      .then(() => navigation.navigate('Home'))
-      .then(() => setEmail('', setPass('')));
-  };
-
-  return { loginRoutine, firstLoginRoutine, logoutRoutine };
+  return { logoutRoutine, loginRoutine };
 }
