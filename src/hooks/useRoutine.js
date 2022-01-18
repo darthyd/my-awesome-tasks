@@ -8,6 +8,12 @@ import useStore from './useStore';
 /** **************************************************************
     * Hook personalizado para realizar rotinas comuns na aplicação
     * ex: rotinas de login, logout, etc
+    *
+    * @function loginRoutine
+    * - realiza a rotina pós login do usuário
+    *
+    * @function logoutRoutine
+    * - realiza a rotina pós logout do usuário
   ***************************************************************** */
 export default function useRoutine() {
   const {

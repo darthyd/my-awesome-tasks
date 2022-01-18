@@ -6,10 +6,16 @@ import useStore from './useStore';
 
 /** **************************************************************
     * Hook personalizado para atualizar as tarefas do usuário
-    * addTask( data: dados da tarefa )
-    * editTask( id: id da tarefa, task: objeto com as novas informações da tarefa )
-    * deleteTask( id: id da tarefa )
-  ***************************************************************** */
+    *
+    * @function addTask
+    * - adiciona nova tarefa
+    *
+    * @function editTask
+    * - edita uma tarefa existente
+    *
+    * @function deleteTask
+    * - deleta uma tarefa existente
+    *  */
 export default function useUpdateTasks() {
   const { tasks, setTasks } = useContext(Context);
   const { syncLocalWithRemote } = useStore();

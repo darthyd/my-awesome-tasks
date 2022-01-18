@@ -8,6 +8,12 @@ import { findById } from '../utils/utilsID';
 /** **************************************************************
     * Hook personalizado para utilizar ou alterar dados de tarefas
     * no armazenamento remoto
+    *
+    * @function getTasksFromDB
+    * - busca as tarefas do usuário no db
+    *
+    * @function syncLocalWithRemote
+    * - sincroniza as tarefas com o db
   ***************************************************************** */
 export default function useStore() {
   const { user } = useContext(Context);
