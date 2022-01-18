@@ -5,12 +5,20 @@ import themes from '../configs/themes';
 import { db } from '../configs/firebase';
 import useStore from './useStore';
 
+/** **************************************************************
+    * Hook personalizado para realizar rotinas comuns na aplicação
+    * ex: rotinas de login, logout, etc
+  ***************************************************************** */
 export default function useRoutine() {
   const {
     setTasks, setTheme, setUser, user, theme
   } = useContext(Context);
   const { getTasksFromDB, syncLocalWithRemote } = useStore();
 
+  /** **************************************************************
+    * Rotina para quando o usuário loga no app
+    * @params { user: objeto com as informações do usuário }
+  ***************************************************************** */
   const loginRoutine = async (u = user) => {
     const response = { theme: { ...theme }, tasks: [] };
 
@@ -44,6 +52,9 @@ export default function useRoutine() {
     return response;
   };
 
+  /** **************************************************************
+    * Rotina para quando o usuário faz logout do app
+  ***************************************************************** */
   const logoutRoutine = () => {
     AsyncStorage.clear();
     setTheme(themes.default);
